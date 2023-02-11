@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <title>Hair Haulers</title>
+    <!-- <style>
+      #img{
+        margin-top: 200px;
+      }
+      body{
+        background-image: url(/assets/images/background.jpg) ;
+        background-repeat: no-repeat;
+      }
+    </style> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+
+
+    body {
+        margin: 50px;
+        margin-left: 50px;
+        padding: 0;
+    }
+
+    #map {
+        width: 40%;
+        height: 50vh;
+    }
+    </style>
+
+</head>
+<body>
+    <header class="text-gray-600 body-font">
+        <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+          <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+            <img id="img" src="./assets/images/hero-shape.png" width="116" height="116" loading="lazy"
+              class="hero-shape shape-1">
+            <span class="ml-3 text-xl">Hair Haulers</span>
+          </a>
+        
+        </div>
+          <section class="text-gray-600 body-font">
+            <div class="container px-5 py-24 mx-auto flex flex-wrap items-center">
+              <p>To track your Package please enter valid Tracking No and Tracking Id. This page provide an online automatice tracking System to track your package. You can track the current status of the parcel instead of visiting our warehouse location or calling service Center.</p>
+              
+              <div id="map"></div>
+              <div class="lg:w-2/6 md:w-1/2 bg-gray-100 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+                <h2 class="text-gray-900 text-lg font-medium title-font mb-5">Track Your Order</h2>
+                <div class="relative mb-4">
+                  <label for="full-name" class="leading-7 text-sm text-gray-600">Name</label>
+                  <input type="text" id="full-name" name="full-name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                </div>
+                <div class="relative mb-4">
+                  <label for="full-name" class="leading-7 text-sm text-gray-600">Tracking No</label>
+                  <input type="number" id="full-name" name="full-name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                </div>
+                <div class="relative mb-4">
+                  <label for="full-name" class="leading-7 text-sm text-gray-600">Tracking Id</label>
+                  <input type="number" id="full-name" name="full-name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                </div>
+                <div class="relative mb-4">
+                  <label for="full-name" class="leading-7 text-sm text-gray-600">Phone No</label>
+                  <input type="number" id="full-name" name="full-name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                </div>
+                <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Track</button>
+              </div>
+            </div>
+          </section>
+        
+      </header>
+</body>
+</html>
+
+<!-- leaflet js  -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    // Map initialization 
+    var map = L.map('map').setView([14.0860746, 100.608406], 6);
+
+    //osm layer
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+    osm.addTo(map);
+
+    if(!navigator.geolocation) {
+        console.log("Your browser doesn't support geolocation feature!")
+    } else {
+        setInterval(() => {
+            navigator.geolocation.getCurrentPosition(getPosition)
+        }, 5000);
+    }
+
+    var marker, circle;
+
+    function getPosition(position){
+        // console.log(position)
+        var lat = position.coords.latitude
+        var long = position.coords.longitude
+        var accuracy = position.coords.accuracy
+
+        if(marker) {
+            map.removeLayer(marker)
+        }
+
+        if(circle) {
+            map.removeLayer(circle)
+        }
+
+        marker = L.marker([lat, long])
+        circle = L.circle([lat, long], {radius: accuracy})
+
+        var featureGroup = L.featureGroup([marker, circle]).addTo(map)
+
+        map.fitBounds(featureGroup.getBounds())
+
+        console.log("Your coordinate is: Lat: "+ lat +" Long: "+ long+ " Accuracy: "+ accuracy)
+    }
+
+</script>
